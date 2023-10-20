@@ -1,0 +1,8 @@
+{
+    "browser": "Chrome",
+    "film":{
+        "title" : "Остров проклятых",
+        "country" : "США",
+        "genre" : "детектив"
+    }
+}

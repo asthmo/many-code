@@ -1,7 +1,11 @@
-.idea
-venv
-*.pytest_cache
-reports/selene/*
-reports/allure/*
+__pycache__
+locators/__pycache__
+pages/__pycache__
+tests/__pycache__
+.pytest_cache
+.vscode
+locators
 *.log
+*.bak
 *.pyc
+venv
