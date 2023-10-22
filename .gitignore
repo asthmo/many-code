@@ -1,0 +1,7 @@
+__pycache__
+.pytest_cache
+.vscode
+src/__pycache__
+tests/test_main.py.bak
+tests/__pycache__
+ccc.py

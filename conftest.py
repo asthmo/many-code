@@ -1,7 +1,8 @@
 import pytest
-from src.json_creator import json_Creator
+from src.json_creator import DictEventsCreator
+
 
 @pytest.fixture
 def event_create():
-    event = json_Creator()
+    event = DictEventsCreator()
     return event
