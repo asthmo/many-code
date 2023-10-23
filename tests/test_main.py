@@ -31,11 +31,12 @@ def test_read_file(event_handler_object):
 
             # Проверка что тип события входит в список допустимых
             if EventTypes(events['event_type']):
-                print('haha')
                 counter_event_types += 1
-
-    print(counter_events, counter_keys, counter_event_types)
-
+    
+    # Проверка что во всех событиях, переданы все поля
+    assert counter_keys == counter_events
+    # Проверка что во всех событиях, типы событий являются допустимыми
+    assert counter_event_types == counter_events
 
 def test_sort_events_list(event_handler_object):
     events = event_handler_object.load_data_from_file('./src/events.json')

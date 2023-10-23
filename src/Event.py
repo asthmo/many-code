@@ -30,7 +30,6 @@ class Event:
 
     def str_to_date(self):
         my_date = datetime.strptime(self.event_date.split(' ')[0], '%Y-%m-%d')
-
         return my_date
 
 
@@ -43,25 +42,25 @@ class EventHandler:
     def get_events(self):
         return self.event_list
 
-    def sort_and_form(self, event_list=[]):
+    def sort_and_form(self):
         result = {}
-        event_list = sorted(event_list, key=lambda x: datetime.strptime(
+        event_list = sorted(self.event_list, key=lambda x: datetime.strptime(
             x['datetime'].split()[0], '%Y-%m-%d'), reverse=False)
-
+        
         for event in event_list:
             event_info = Event(event['datetime'], event['event_type'],
                                event['title'], event['members'], event['place'])
             date = event_info.get_datetime().split()[0]
-
             if date in result:
                 result[date].append(event)
                 result[date] = sorted(result[date], key=lambda x: datetime.strptime(
                     x['datetime'], '%Y-%m-%d %H:%M%z'))
             else:
                 result[date] = [event]
-
+                
         return result
 
     def create_json_file(self, file_name, output):
         with open(file_name, 'w') as file:
             json.dump(output, file, indent=3)
+

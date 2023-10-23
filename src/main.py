@@ -1,5 +1,5 @@
 import argparse
-from src.Event import EventHandler
+from event import EventHandler
 
 if __name__ == '__main__':
     start_script = argparse.ArgumentParser(
