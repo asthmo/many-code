@@ -31,7 +31,7 @@ services:
       - selenoid
     links:
       - selenoid
-    command: ["./wait-for", "${SELENOID_HOST}", "--", "pytest", "--driver_url=http://${SELENOID_HOST}/wd/hub", "--alluredir=/allure-reports", "--emails=${EMAILS}"]
+    command: ["./wait-for", "${SELENOID_HOST}", "--", "pytest", "--driver_url=http://${SELENOID_HOST}/wd/hub", "--alluredir=/allure-reports"]
 
   selenoid:
     network_mode: bridge

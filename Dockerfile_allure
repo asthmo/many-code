@@ -8,10 +8,10 @@ RUN apk update && \
         update-ca-certificates && \
         apk add openssl
 
-RUN wget https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/2.7.0/allure-2.7.0.tgz
-RUN tar -xvzf allure-2.7.0.tgz -C /
-RUN mv /allure-2.7.0/* /allure/
-RUN rm allure-2.7.0.tgz
+#RUN wget https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/2.7.0/allure-2.7.0.tgz
+#RUN tar -xvzf allure-2.7.0.tgz -C /
+#RUN mv /allure-2.7.0/* /allure/
+#RUN rm allure-2.7.0.tgz
 ENV PATH="/allure/bin:${PATH}"
 ENV ALLURE_CONFIG="/allure-config/allure.properties"
 ENV ALLURE_CMD="allure generate /allure-reports -o /allure-results --clean"
