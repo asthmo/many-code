@@ -3,40 +3,62 @@ import random
 import json
 
 from datetime import datetime
-from src.Event import EventEditor
-from src.json_creator import json_Creator
-# r
+from src.event import EventHandler
+from src.json_creator import DictEventsCreator
+from src.event import EventTypes
+
 
 @pytest.fixture(scope='module')
-def event_object():
-    event = EventEditor()
-    events_list = event.load_data_from_file('./src/events.json')
+def event_handler_object():
+    event = EventHandler()
     return event
 
-def test_read_file(event_object):
-    list_check_fields = [True if list(event.keys()) == ['datetime', 'event_type', 'title', 'members', 'place'] else False for event in event_object.get_events()]
-    assert list_check_fields.count(True) == len(event_object.get_events())
 
-def test_sort_events_list(event_object):
-    sorted_events = list(event_object.sort_and_form().keys())
+def test_read_file(event_handler_object):
+    events_list = event_handler_object.load_data_from_file('./src/events.json')
+
+    counter_events = 0
+    counter_keys = 0
+    counter_event_types = 0
+
+    for value in events_list:
+        for events in events_list[value]:
+            counter_events += 1
+
+            # проверка ключей событий
+            if ['datetime', 'event_type', 'title', 'members', 'place'] == list(events.keys()):
+                counter_keys += 1
+
+            # Проверка что тип события входит в список допустимых
+            if EventTypes(events['event_type']):
+                counter_event_types += 1
     
-    # указываю 1, потому что при переборе и сравнении дат, мы не проверяем последнюю дату
-    true_counter = 1
+    # Проверка что во всех событиях, переданы все поля
+    assert counter_keys == counter_events
+    # Проверка что во всех событиях, типы событий являются допустимыми
+    assert counter_event_types == counter_events
 
-    for event_date_i in range(0, len(sorted_events)-1):
-        if datetime.strptime(sorted_events[event_date_i], '%Y-%m-%d') < datetime.strptime(sorted_events[event_date_i+1], '%Y-%m-%d'):
-            true_counter += 1
-    
-    assert true_counter == len(sorted_events)
+def test_sort_events_list(event_handler_object):
+    events = event_handler_object.load_data_from_file('./src/events.json')
+    sorted_events = event_handler_object.sort_and_form(events)
+    events_groups_date = all(
+        events_group_date < events_group_date+1 for events_group_date in range(len(sorted_events.keys())))
 
-def test_write_events(event_object, event_create):
+    for key, value in sorted_events.items():
+        assert all(
+            value[group_i]['datetime'] < value[group_i + 1]['datetime'] for group_i in range(len(value) - 1))
+
+    assert events_groups_date == True
+
+
+def test_write_events(event_handler_object, event_create):
     data = []
-    for _ in range(2,random.randint(3,10)):
+    for _ in range(2, random.randint(3, 10)):
         data.append(event_create.get_event())
-    sort_data = event_object.sort_and_form(data)
-    event_object.create_json_file('test_json.json', sort_data)
+    sort_data = event_handler_object.sort_and_form(data)
+    event_handler_object.create_json_file('test_json.json', sort_data)
 
-    with open('test_json.json','r') as f:
+    with open('test_json.json', 'r') as f:
         json_str = json.loads(f.read())
-        
+
     assert json_str == sort_data

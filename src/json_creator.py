@@ -1,52 +1,69 @@
 import random
 import string
-from datetime import datetime, timedelta, timezone
-
-class json_Creator:
-    AVAILABLE_EVENT_TYPES = ("private", "meeting", "corporate", "other")
+import datetime
+import enum
 
 
-    def __init__(self, date_time = '', event_type = '', title = '', members = [], place = '', time_delta = ''):
-        self.date_time = date_time
-        self.event_type = event_type
+class EventTypes(enum.Enum):
+    PRIVATE = "private"
+    MEETING = "meeting"
+    CORPORATE = "corporate"
+    OTHER = "other"
+
+
+class EventPlaces(enum.Enum):
+    ZOOM = "zoom"
+    TELEGRAM = "telegram"
+    SKYPE = "skype"
+    DISCORD = "discord"
+    OTHER = "other"
+
+
+class DictEventsCreator:
+    DEFAULT_START_DATE = datetime.datetime(year=2015, month=5, day=12, hour=15,
+                                           minute=22, second=24, tzinfo=datetime.timezone.utc)
+    DEFAULT_END_DATE = datetime.datetime(year=2023, month=10, day=20, hour=12,
+                                         minute=24, second=44, tzinfo=datetime.timezone.utc)
+
+    def __init__(self, event_date='2019-07-07 01:04:00+00:00', event_type='meeting', title='About programms', members=['Vladimir', 'Alexander'], place='zoom'):
+        self.event_date = event_date
+        self.event_type = place
         self.title = title
         self.members = members
         self.place = place
 
-    def create_datetime(self):
-        min_year = 2000
-        max_year=datetime.now().year
-        start = datetime(year=min_year, month=1, day=1, hour=00, minute=00, tzinfo=timezone.utc)
-        years = max_year - min_year + 1
-        end = start + timedelta(days=365 * years)
-        self.date_time = datetime.strftime(start + (end - start) * random.random(), '%Y-%m-%d %H:%M%z')
-        return self.date_time
+    def create_datetime(self, start_date=DEFAULT_START_DATE, end_date=DEFAULT_END_DATE):
+        delta = end_date - start_date
+        seconds_delta = delta.total_seconds()
+        random_second = random.randint(0, int(seconds_delta))
+        random_date_time = start_date + \
+            datetime.timedelta(seconds=random_second)
+        return datetime.datetime.strftime(random_date_time, '%Y-%m-%d %H:%M:%S%z')
 
     def create_event_type(self):
-        return random.choice(self.AVAILABLE_EVENT_TYPES)
-    
+        return random.choice(list(EventTypes)).value
+
     def create_title(self):
-        words = ['users', 'programms', 'weather', 'events', 'books', 'space', 'cars', 'houses', 'test']
+        words = ['users', 'programms', 'weather', 'events',
+                 'books', 'space', 'cars', 'houses', 'test']
         self.title = 'About ' + random.choice(words)
         return self.title
-    
+
     def add_users(self):
         users = ['Vladimir', 'Ivan', 'Artem', 'Roman', 'Vasiliy', 'Alexandr']
-        for _ in range(1,random.randint(2,5)):
-            self.members.append(random.choice(users))
+        self.members = random.sample(users, 5)
 
         return self.members
-    
+
     def create_place(self):
-        places = ['zoom', 'telegram', 'skype', 'discord', 'other']
-        self.place = random.choice(places)
+        self.place = random.choice(list(EventPlaces)).value
         return self.place
-    
+
     def get_event(self):
         return {
-            'datetime' : self.create_datetime(),
-            'event_type' : self.create_event_type(),
-            'title' : self.create_title(),
-            'members' : self.add_users(),
-            'place' : self.create_place()
+            'datetime': self.create_datetime(),
+            'event_type': self.create_event_type(),
+            'title': self.create_title(),
+            'members': self.add_users(),
+            'place': self.create_place()
         }
